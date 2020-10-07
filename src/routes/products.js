@@ -3,24 +3,12 @@
 
 const router = require('express').Router();
 
+const Products = require('../controllers/Products');
 
+router.post('/', Products.post);
 
-router.post('/', (req, res, next) => {
-    const body = req.body;
-    res.status(201).json(body);
-});
+router.patch('/:id', Products.patch);
 
-router.patch('/:id', (req, res, next) => {
-    const { id } = req.params;
-    const body = req.body;
-    res.status(200).json({ id: id, item: body });
-});
-
-
-router.delete('/:id', (req, res, next) => {
-    const { id } = req.params;
-    const body = req.body;
-    res.status(200).json({ id, item: body });
-});
+router.delete('/:id', Products.delete);
 
 module.exports = router;
