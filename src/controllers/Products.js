@@ -4,21 +4,39 @@
 const mongoose = require("mongoose");
 
 const Product = mongoose.model('Product');
+
 exports.listAll = async(req, res, next) => {
 
-    Product.find({ active: true }, 'title description price slug tags')
+    await Product.find({ active: true }, 'title price slug tags')
         .then((data) => {
             console.log(data);
             res.status(200).json(data);
         })
         .catch((err) => {
             console.log(err);
-            res.status(400).json({ error: err, message: 'Falha ao listar todos os produtos' })
+            res.status(400).json({ message: 'Falha ao listar todos os produtos', error: err });
 
         });
 
 
 };
+
+exports.getProductBySlug = async(req, res, next) => {
+    const { slug } = req.params;
+    await Product.find({ slug }, 'title description price slug tags')
+        .then((data => {
+            console.log(data);
+            res.status(200).json(data);
+        }))
+        .catch((err) => {
+            console.log(err);
+            res.status(204).json({
+                message: `Falha ao listar o produto com o slug ${slug}`,
+                error: err
+            })
+        });
+};
+
 exports.post = (req, res, next) => {
     const body = req.body;
 

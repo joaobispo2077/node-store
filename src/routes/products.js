@@ -7,6 +7,8 @@ const Products = require('../controllers/Products');
 
 router.get('/', Products.listAll);
 
+router.get('/:slug', Products.getProductBySlug);
+
 router.post('/', Products.post);
 
 router.patch('/:id', Products.patch);
