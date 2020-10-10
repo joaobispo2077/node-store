@@ -23,7 +23,7 @@ exports.listAll = async(req, res, next) => {
 
 exports.getProductBySlug = async(req, res, next) => {
     const { slug } = req.params;
-    await Product.find({ slug }, 'title description price slug tags')
+    await Product.findOne({ slug }, 'title description price slug tags')
         .then((data => {
             console.log(data);
             res.status(200).json(data);
