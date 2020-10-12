@@ -10,7 +10,7 @@ exports.listAll = async(req, res, next) => {
     await Product.find({ active: true }, 'title price slug tags')
         .then((data) => {
             console.log(data);
-            res.status(200).json(data);
+            res.status(200).json({ message: 'Produtos listados com sucesso', products: data });
         })
         .catch((err) => {
             console.log(err);
@@ -26,7 +26,10 @@ exports.getBySlug = async(req, res, next) => {
     await Product.findOne({ slug }, 'title description price slug tags')
         .then((data => {
             console.log(data);
-            res.status(200).json(data);
+            res.status(200).json({
+                message: `O produto com o slug ${slug} foi encontrado!`,
+                product: data
+            });
         }))
         .catch((err) => {
             console.log(err);
@@ -42,12 +45,15 @@ exports.getByTags = async(req, res, next) => {
     await Product.find(tags, 'title price slug tags')
         .then((data => {
             console.log(data);
-            res.status(200).json(data);
+            res.status(200).json({
+                message: `O produto com o tag ${tags} foi encontrado!`,
+                product: data
+            });
         }))
         .catch((err) => {
             console.log(err);
             res.status(400).json({
-                message: `Falha ao listar o produto com o slug ${tags}`,
+                message: `Falha ao listar o produto com a tag ${tags}`,
                 error: err
             })
         });
@@ -60,12 +66,15 @@ exports.getById = async(req, res, next) => {
             'title description price slug tags')
         .then((data => {
             console.log(data);
-            res.status(200).json(data);
+            res.status(200).json({
+                message: `O produto com o id ${id} foi encontrado!`,
+                product: data
+            });
         }))
         .catch((err) => {
             console.log(err);
             res.status(400).json({
-                message: `Falha ao listar o produto com o slug ${id}`,
+                message: `Falha ao listar o produto com o id ${id}`,
                 error: err
             })
         });
@@ -107,7 +116,10 @@ exports.patch = (req, res, next) => {
             slug
         }
     }).then(data => {
-        res.status(201).json(data);
+        res.status(201).json({
+            message: `O produto com o id ${id} foi atualizado com sucesso!`,
+            product: data
+        });
 
     }).catch(err => {
         res.status(400).json({ message: `Falha ao atualizar o produto ${title}`, error: err })
@@ -118,7 +130,10 @@ exports.patch = (req, res, next) => {
 exports.delete = (req, res, next) => {
     const { id } = req.params;
     Product.findOneAndRemove(id).then(data => {
-        res.status(200).json(data);
+        res.status(200).json({
+            message: `O produto com o id ${id} foi removido com sucesso!`,
+            product: data
+        });
 
     }).catch(err => {
         res.status(400).json({ message: `Falha ao remover o produto de id: ${id}`, error: err })
