@@ -30,7 +30,7 @@ exports.getProductBySlug = async(req, res, next) => {
         }))
         .catch((err) => {
             console.log(err);
-            res.status(204).json({
+            res.status(400).json({
                 message: `Falha ao listar o produto com o slug ${slug}`,
                 error: err
             })
@@ -48,7 +48,7 @@ exports.getProductById = async(req, res, next) => {
         }))
         .catch((err) => {
             console.log(err);
-            res.status(204).json({
+            res.status(400).json({
                 message: `Falha ao listar o produto com o slug ${id}`,
                 error: err
             })
