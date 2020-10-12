@@ -6,6 +6,9 @@ const app = express();
 
 const Product = require('./models/Product');
 
+const indexRoutes = require('./routes/index');
+const productsRoutes = require('./routes/Products');
+
 const uri = 'mongodb://admin:admin@ndstr-shard-00-00.chsnt.azure.mongodb.net:27017,ndstr-shard-00-01.chsnt.azure.mongodb.net:27017,ndstr-shard-00-02.chsnt.azure.mongodb.net:27017/ndstr?ssl=true&replicaSet=atlas-1395iu-shard-0&authSource=admin&retryWrites=true&w=majority';
 
 // mongoose.connect(uri, {
@@ -17,16 +20,10 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     .catch(err => console.log(err + '\n \n could not connect!'));
 
 
-const indexRoutes = require('./routes/index');
-const productsRoutes = require('./routes/Products');
-
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
-
-
-
 
 app.use('/', indexRoutes);
 app.use('/products', productsRoutes);

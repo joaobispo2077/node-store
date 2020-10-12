@@ -37,6 +37,24 @@ exports.getProductBySlug = async(req, res, next) => {
         });
 };
 
+exports.getProductById = async(req, res, next) => {
+    const { id } = req.params;
+    await Product.findById(
+            id,
+            'title description price slug tags')
+        .then((data => {
+            console.log(data);
+            res.status(200).json(data);
+        }))
+        .catch((err) => {
+            console.log(err);
+            res.status(204).json({
+                message: `Falha ao listar o produto com o slug ${id}`,
+                error: err
+            })
+        });
+};
+
 exports.post = (req, res, next) => {
     const body = req.body;
 
