@@ -4,6 +4,7 @@
 const mongoose = require("mongoose");
 
 const Product = mongoose.model('Product');
+const ValidatorContract = require('../validators/fluidValidator');
 
 exports.listAll = async(req, res, next) => {
 
@@ -83,6 +84,16 @@ exports.getById = async(req, res, next) => {
 exports.post = (req, res, next) => {
     const body = req.body;
 
+    const contract = new ValidatorContract();
+
+    contract.hasMinLen(body.title, 3, 'O Título deve conter pelo menos 3 caracteres');
+    contract.hasMinLen(body.slug, 3, 'O Slug deve conter pelo menos 3 caracteres');
+    contract.hasMinLen(body.description, 3, 'A Descrição deve conter pelo menos 3 caracteres');
+
+    if (!contract.isValid()) {
+        res.status(400).send(contract.errors()).end();
+        return;
+    }
     const product = new Product(body);
     product
         .save()
