@@ -9,7 +9,7 @@ router.get('/', Products.listAll);
 
 router.get('/admin/:id', Products.getById);
 
-router.get('/tags/:tag', Products.getByTags);
+router.get('/tags/:tags', Products.getByTags);
 
 router.get('/:slug', Products.getBySlug);
 

@@ -5,10 +5,12 @@ const mongoose = require("mongoose");
 
 const Product = mongoose.model('Product');
 const ValidatorContract = require('../validators/fluidValidator');
+const repository = require('../repositories/productRepository');
 
 exports.listAll = async(req, res, next) => {
 
-    await Product.find({ active: true }, 'title price slug tags')
+    await repository
+        .get()
         .then((data) => {
             console.log(data);
             res.status(200).json({ message: 'Produtos listados com sucesso', products: data });
@@ -24,7 +26,8 @@ exports.listAll = async(req, res, next) => {
 
 exports.getBySlug = async(req, res, next) => {
     const { slug } = req.params;
-    await Product.findOne({ slug }, 'title description price slug tags')
+
+    await repository.getBySlug(slug)
         .then((data => {
             console.log(data);
             res.status(200).json({
@@ -43,7 +46,9 @@ exports.getBySlug = async(req, res, next) => {
 
 exports.getByTags = async(req, res, next) => {
     const { tags } = req.params;
-    await Product.find(tags, 'title price slug tags')
+
+
+    await repository.getByTags(tags)
         .then((data => {
             console.log(data);
             res.status(200).json({
@@ -62,9 +67,7 @@ exports.getByTags = async(req, res, next) => {
 
 exports.getById = async(req, res, next) => {
     const { id } = req.params;
-    await Product.findById(
-            id,
-            'title description price slug tags')
+    await repository.getById(id)
         .then((data => {
             console.log(data);
             res.status(200).json({
@@ -94,9 +97,7 @@ exports.post = (req, res, next) => {
         res.status(400).send(contract.errors()).end();
         return;
     }
-    const product = new Product(body);
-    product
-        .save()
+    repository.create(body)
         .then((productSaved) => {
 
             console.log(productSaved);
@@ -117,36 +118,32 @@ exports.post = (req, res, next) => {
 }
 exports.patch = (req, res, next) => {
     const { id } = req.params;
-    const { title, description, price, slug } = req.body;
+    const body = req.body;
 
-    Product.findByIdAndUpdate(id, {
-        $set: {
-            title,
-            description,
-            price,
-            slug
-        }
-    }).then(data => {
-        res.status(201).json({
-            message: `O produto com o id ${id} foi atualizado com sucesso!`,
-            product: data
-        });
+    repository.update(id, body)
+        .then(data => {
+            res.status(201).json({
+                message: `O produto com o id ${data.id} foi atualizado com sucesso!`,
+                product: data
+            });
 
-    }).catch(err => {
-        res.status(400).json({ message: `Falha ao atualizar o produto ${title}`, error: err })
-    })
+        }).catch(err => {
+            res.status(400).json({ message: `Falha ao atualizar o produto ${body.title}`, error: err })
+        })
 
 };
 
 exports.delete = (req, res, next) => {
     const { id } = req.params;
-    Product.findOneAndRemove(id).then(data => {
-        res.status(200).json({
-            message: `O produto com o id ${id} foi removido com sucesso!`,
-            product: data
-        });
 
-    }).catch(err => {
-        res.status(400).json({ message: `Falha ao remover o produto de id: ${id}`, error: err })
-    })
+    repository.remove(id)
+        .then(data => {
+            res.status(200).json({
+                message: `O produto com o id ${id} foi removido com sucesso!`,
+                product: data
+            });
+
+        }).catch(err => {
+            res.status(400).json({ message: `Falha ao remover o produto de id: ${id}`, error: err })
+        })
 };
