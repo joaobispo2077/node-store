@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-vars */
 'use strict'
 
-const mongoose = require("mongoose");
-
 const ValidatorContract = require('../validators/fluidValidator');
 const repository = require('../repositories/productRepository');
 
