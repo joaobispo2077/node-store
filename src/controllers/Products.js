@@ -3,88 +3,92 @@
 
 const mongoose = require("mongoose");
 
-const Product = mongoose.model('Product');
 const ValidatorContract = require('../validators/fluidValidator');
 const repository = require('../repositories/productRepository');
 
 exports.listAll = async(req, res, next) => {
 
-    await repository
-        .get()
-        .then((data) => {
-            console.log(data);
-            res.status(200).json({ message: 'Produtos listados com sucesso', products: data });
-        })
-        .catch((err) => {
-            console.log(err);
-            res.status(400).json({ message: 'Falha ao listar todos os produtos', error: err });
-
-        });
-
+    try {
+        const data = await repository.get();
+        console.log(data);
+        res.status(200).json({ message: 'Produtos listados com sucesso', products: data });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: 'Falha ao listar todos os produtos', error: err });
+    }
 
 };
 
 exports.getBySlug = async(req, res, next) => {
+
     const { slug } = req.params;
 
-    await repository.getBySlug(slug)
-        .then((data => {
-            console.log(data);
-            res.status(200).json({
+    try {
+        const data = await repository.getBySlug(slug);
+        console.log(data);
+        res.status(200)
+            .json({
                 message: `O produto com o slug ${slug} foi encontrado!`,
                 product: data
             });
-        }))
-        .catch((err) => {
-            console.log(err);
-            res.status(400).json({
-                message: `Falha ao listar o produto com o slug ${slug}`,
-                error: err
-            })
+
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({
+            message: `Falha ao listar o produto com o slug ${slug}`,
+            error: err
         });
+    }
+
 };
 
 exports.getByTags = async(req, res, next) => {
+
     const { tags } = req.params;
 
+    try {
 
-    await repository.getByTags(tags)
-        .then((data => {
-            console.log(data);
-            res.status(200).json({
-                message: `O produto com o tag ${tags} foi encontrado!`,
-                product: data
-            });
-        }))
-        .catch((err) => {
-            console.log(err);
-            res.status(400).json({
-                message: `Falha ao listar o produto com a tag ${tags}`,
-                error: err
-            })
+        const data = await repository.getByTags(tags);
+
+        console.log(data);
+
+        res.status(200).json({
+            message: `O produto com o tag ${tags} foi encontrado!`,
+            product: data
         });
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(400).json({
+            message: `Falha ao listar o produto com a tag ${tags}`,
+            error: err
+        });
+    }
 };
 
 exports.getById = async(req, res, next) => {
     const { id } = req.params;
-    await repository.getById(id)
-        .then((data => {
-            console.log(data);
-            res.status(200).json({
-                message: `O produto com o id ${id} foi encontrado!`,
-                product: data
-            });
-        }))
-        .catch((err) => {
-            console.log(err);
-            res.status(400).json({
-                message: `Falha ao listar o produto com o id ${id}`,
-                error: err
-            })
-        });
-};
 
-exports.post = (req, res, next) => {
+    try {
+        const data = await repository.getById(id);
+        console.log(data);
+        res.status(200).json({
+            message: `O produto com o id ${id} foi encontrado!`,
+            product: data
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({
+            message: `Falha ao listar o produto com o id ${id}`,
+            error: err
+        });
+    }
+}
+
+
+exports.post = async(req, res, next) => {
     const body = req.body;
 
     const contract = new ValidatorContract();
@@ -97,53 +101,57 @@ exports.post = (req, res, next) => {
         res.status(400).send(contract.errors()).end();
         return;
     }
-    repository.create(body)
-        .then((productSaved) => {
 
-            console.log(productSaved);
-            res.status(201).json({
-                message: 'O produto foi criado com sucesso!',
-                product: productSaved
-            });
+    try {
+        const productSaved = await repository.create(body);
 
-        }).catch((err) => {
-
-            console.log(err);
-            res.status(400).json({
-                message: 'Não foi possível criar o produto!',
-                error: err
-            });
+        console.log(productSaved);
+        res.status(201).json({
+            message: 'O produto foi criado com sucesso!',
+            product: productSaved
         });
 
+    } catch (err) {
+
+        console.log(err);
+        res.status(400).json({
+            message: 'Não foi possível criar o produto!',
+            error: err
+        });
+    }
+
 }
-exports.patch = (req, res, next) => {
+
+exports.patch = async(req, res, next) => {
     const { id } = req.params;
     const body = req.body;
 
-    repository.update(id, body)
-        .then(data => {
-            res.status(201).json({
-                message: `O produto com o id ${data.id} foi atualizado com sucesso!`,
-                product: data
-            });
+    try {
 
-        }).catch(err => {
-            res.status(400).json({ message: `Falha ao atualizar o produto ${body.title}`, error: err })
-        })
+        const data = await repository.update(id, body);
 
+        res.status(201).json({
+            message: `O produto com o id ${data.id} foi atualizado com sucesso!`,
+            product: data
+        });
+    } catch (err) {
+
+        res.status(400).json({ message: `Falha ao atualizar o produto ${body.title}`, error: err });
+    }
 };
 
-exports.delete = (req, res, next) => {
+exports.delete = async(req, res, next) => {
     const { id } = req.params;
 
-    repository.remove(id)
-        .then(data => {
-            res.status(200).json({
-                message: `O produto com o id ${id} foi removido com sucesso!`,
-                product: data
-            });
+    try {
+        const data = await repository.remove(id);
 
-        }).catch(err => {
-            res.status(400).json({ message: `Falha ao remover o produto de id: ${id}`, error: err })
-        })
+        res.status(200).json({
+            message: `O produto com o id ${id} foi removido com sucesso!`,
+            product: data
+        });
+    } catch (err) {
+
+        res.status(400).json({ message: `Falha ao remover o produto de id: ${id}`, error: err });
+    }
 };
