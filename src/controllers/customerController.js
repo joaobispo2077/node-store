@@ -4,7 +4,7 @@
 const mongoose = require("mongoose");
 
 const Customer = mongoose.model('Customer');
-const ValidationContract = require('../validators/fluidValidator');
+const ValidatorContract = require('../validators/fluidValidator');
 const repository = require('../repositories/customerRepository');
 
 exports.listAll = async (req, res, next) => {
@@ -21,6 +21,18 @@ exports.listAll = async (req, res, next) => {
 
 exports.post = async (req, res, next) => {
     const body = req.body;
+
+    const contract = new ValidatorContract();
+
+    contract.hasMinLen(body.name, 3, 'O Nome deve conter pelo menos 3 caracteres');
+    contract.isEmail(body.email, 'O Email inválido, tente o modelo: teste@teste.teste');
+    contract.hasMinLen(body.password, 3, 'A Senha deve conter pelo menos 3 caracteres');
+
+    if (!contract.isValid()) {
+        res.status(500).send(contract.errors()).end();
+        return;
+    }
+
 
     try {
       const data = await repository.create(body);
