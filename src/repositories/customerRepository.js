@@ -10,5 +10,5 @@ exports.get = async () => {
 
 exports.create = async (data) => {
 				const customer =  new Customer(data);
-				return customer.save();
+				return await customer.save();
 }

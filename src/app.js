@@ -12,6 +12,7 @@ const Order = require('./models/Order');
 const indexRoutes = require('./routes/index');
 const productsRoutes = require('./routes/Products');
 const customersRoutes = require('./routes/Customer');
+const ordersRoutes = require('./routes/Order');
 
 const uri = 'mongodb://admin:admin@ndstr-shard-00-00.chsnt.azure.mongodb.net:27017,ndstr-shard-00-01.chsnt.azure.mongodb.net:27017,ndstr-shard-00-02.chsnt.azure.mongodb.net:27017/ndstr?ssl=true&replicaSet=atlas-1395iu-shard-0&authSource=admin&retryWrites=true&w=majority';
 
@@ -31,7 +32,8 @@ app.use(express.urlencoded({
 
 app.use('/', indexRoutes);
 app.use('/products', productsRoutes);
-app.use('/customers', customersRoutes)
+app.use('/customers', customersRoutes);
+app.use('/orders', ordersRoutes);
 
 
 module.exports = app;
