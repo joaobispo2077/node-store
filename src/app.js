@@ -7,6 +7,7 @@ const app = express();
 //loading Models
 const Product = require('./models/Product');
 const Customer = require('./models/Customer');
+const Order = require('./models/Order');
 
 const indexRoutes = require('./routes/index');
 const productsRoutes = require('./routes/Products');
