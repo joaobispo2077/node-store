@@ -34,7 +34,7 @@ exports.getBySlug = async(req, res, next) => {
 
     } catch (err) {
         console.log(err);
-        res.status(400).json({
+        res.status(500).json({
             message: `Falha ao listar o produto com o slug ${slug}`,
             error: err
         });
@@ -60,7 +60,7 @@ exports.getByTags = async(req, res, next) => {
 
         console.log(err);
 
-        res.status(400).json({
+        res.status(500).json({
             message: `Falha ao listar o produto com a tag ${tags}`,
             error: err
         });
@@ -80,7 +80,7 @@ exports.getById = async(req, res, next) => {
 
     } catch (err) {
         console.log(err);
-        res.status(400).json({
+        res.status(500).json({
             message: `Falha ao listar o produto com o id ${id}`,
             error: err
         });
@@ -98,7 +98,7 @@ exports.post = async(req, res, next) => {
     contract.hasMinLen(body.description, 3, 'A Descrição deve conter pelo menos 3 caracteres');
 
     if (!contract.isValid()) {
-        res.status(400).send(contract.errors()).end();
+        res.status(500).send(contract.errors()).end();
         return;
     }
 
@@ -114,7 +114,7 @@ exports.post = async(req, res, next) => {
     } catch (err) {
 
         console.log(err);
-        res.status(400).json({
+        res.status(500).json({
             message: 'Não foi possível criar o produto!',
             error: err
         });
@@ -136,7 +136,7 @@ exports.patch = async(req, res, next) => {
         });
     } catch (err) {
 
-        res.status(400).json({ message: `Falha ao atualizar o produto ${body.title}`, error: err });
+        res.status(500).json({ message: `Falha ao atualizar o produto ${body.title}`, error: err });
     }
 };
 
@@ -152,6 +152,6 @@ exports.delete = async(req, res, next) => {
         });
     } catch (err) {
 
-        res.status(400).json({ message: `Falha ao remover o produto de id: ${id}`, error: err });
+        res.status(500).json({ message: `Falha ao remover o produto de id: ${id}`, error: err });
     }
 };
