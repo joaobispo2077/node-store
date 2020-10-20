@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+const config = require('../config/config');
+
 //loading Models
 const Product = require('./models/Product');
 const Customer = require('./models/Customer');
@@ -14,7 +16,7 @@ const productsRoutes = require('./routes/Products');
 const customersRoutes = require('./routes/Customer');
 const ordersRoutes = require('./routes/Order');
 
-const uri = 'mongodb://admin:admin@ndstr-shard-00-00.chsnt.azure.mongodb.net:27017,ndstr-shard-00-01.chsnt.azure.mongodb.net:27017,ndstr-shard-00-02.chsnt.azure.mongodb.net:27017/ndstr?ssl=true&replicaSet=atlas-1395iu-shard-0&authSource=admin&retryWrites=true&w=majority';
+const uri = config.connectionString;
 
 // mongoose.connect(uri, {
 //     useNewUrlParser: true
