@@ -5,6 +5,7 @@ const md5 = require('md5');
 
 const ValidatorContract = require('../validators/fluidValidator');
 const repository = require('../repositories/customerRepository');
+const emailService = require('../services/email-service');
 
 exports.listAll = async (req, res, next) => {
 
@@ -40,6 +41,13 @@ exports.post = async (req, res, next) => {
 
     try {
       const data = await repository.create(body);
+
+      emailService.send(
+        body.email, 
+        'Bem vindo ao Node Store', 
+        global.EMAIL_TMPL.replace('{0}', body.name)
+        );
+
       res.status(201).json({ message: 'customer has created successfully', data});
     } catch (err) {
       console.log(err); 
