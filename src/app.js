@@ -16,6 +16,8 @@ const productsRoutes = require('./routes/Products');
 const customersRoutes = require('./routes/Customer');
 const ordersRoutes = require('./routes/Order');
 
+const bikcraftRoutes = require('./routes/Bikcraft');
+
 const uri = config.connectionString;
 
 // mongoose.connect(uri, {
@@ -36,6 +38,7 @@ app.use('/', indexRoutes);
 app.use('/products', productsRoutes);
 app.use('/customers', customersRoutes);
 app.use('/orders', ordersRoutes);
+app.use('/bikcraft', bikcraftRoutes);
 
 
 module.exports = app;
