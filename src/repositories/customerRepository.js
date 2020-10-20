@@ -5,7 +5,7 @@ const Customer = mongoose.model('Customer');
 
 
 exports.get = async () => {
-        return await Customer.find();
+        return await Customer.find({}).populate('customer');
 }
 
 exports.create = async (data) => {
