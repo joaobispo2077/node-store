@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars */
 'use strict'
 
-const mongoose = require("mongoose");
+const md5 = require('md5');
 
-const Customer = mongoose.model('Customer');
 const ValidatorContract = require('../validators/fluidValidator');
 const repository = require('../repositories/customerRepository');
 
@@ -20,7 +19,11 @@ exports.listAll = async (req, res, next) => {
   }
 
 exports.post = async (req, res, next) => {
-    const body = req.body;
+    const body = {
+      name: req.body.name,
+      email: req.body.email,
+      password: md5(req.body.password + global.SALT_KEY)
+    };
 
     const contract = new ValidatorContract();
 
@@ -32,6 +35,7 @@ exports.post = async (req, res, next) => {
         res.status(500).send(contract.errors()).end();
         return;
     }
+
 
 
     try {
