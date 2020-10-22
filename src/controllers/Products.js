@@ -1,8 +1,13 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 'use strict'
 
+const azure = require('azure-storage');
+const guid = require('guid');
+
 const ValidatorContract = require('../validators/fluidValidator');
 const repository = require('../repositories/productRepository');
+const config = require('../../config/config');
 
 exports.listAll = async(req, res, next) => {
 
@@ -101,7 +106,31 @@ exports.post = async(req, res, next) => {
     }
 
     try {
-        const productSaved = await repository.create(body);
+        const blobService = azure.createBlobService(config.userImagesBlobConnectionString);
+
+        let fileName = guid.raw().toString( + '.jpeg');
+        const rawData = req.body.image;
+        
+        //const regex = /^data:([A-Za-z-+\/]+);base64,(.+)$/; need Fix
+
+        const matches = rawData.match(regex);
+        const type = matches[1];
+        //const buffer = new Buffer(matches[2], 'base64'); need Fix
+
+        await blobService.createBlockBlobFromText('product-images', filename, buffer, {
+            contentType: type
+        }, (error, result, response) => {
+            if (error) {
+                fileName = 'default-product.png';
+            }
+        });
+
+        const data = {
+            ...body,
+            image: 'https://nodestorestorage.blob.core.windows.net/product-images/' + filename
+        }
+
+        const productSaved = await repository.create();
 
         console.log(productSaved);
         res.status(201).json({
