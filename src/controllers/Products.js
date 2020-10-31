@@ -92,13 +92,13 @@ exports.getById = async(req, res, next) => {
 
 
 exports.post = async(req, res, next) => {
-    const body = req.body;
+    const { title, description, slug, price, active, tags, image } = req.body;
 
     const contract = new ValidatorContract();
 
-    contract.hasMinLen(body.title, 3, 'O Título deve conter pelo menos 3 caracteres');
-    contract.hasMinLen(body.slug, 3, 'O Slug deve conter pelo menos 3 caracteres');
-    contract.hasMinLen(body.description, 3, 'A Descrição deve conter pelo menos 3 caracteres');
+    contract.hasMinLen(title, 3, 'O Título deve conter pelo menos 3 caracteres');
+    contract.hasMinLen(slug, 3, 'O Slug deve conter pelo menos 3 caracteres');
+    contract.hasMinLen(description, 3, 'A Descrição deve conter pelo menos 3 caracteres');
 
     if (!contract.isValid()) {
         res.status(500).send(contract.errors()).end();
@@ -108,29 +108,30 @@ exports.post = async(req, res, next) => {
     try {
         const blobService = azure.createBlobService(config.userImagesBlobConnectionString);
 
-        let fileName = guid.raw().toString( + '.jpeg');
-        const rawData = req.body.image;
-        
-        //const regex = /^data:([A-Za-z-+\/]+);base64,(.+)$/; need Fix
+        let fileName = guid.raw().toString() + '.jpg';
+        const rawdata = image;
 
-        const matches = rawData.match(regex);
+        // eslint-disable-next-line no-useless-escape
+        const matches = rawdata.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+
         const type = matches[1];
-        //const buffer = new Buffer(matches[2], 'base64'); need Fix
 
-        await blobService.createBlockBlobFromText('product-images', filename, buffer, {
+        const buffer = new Buffer(matches[2], 'base64');
+
+        const uploadedData = await blobService.createBlockBlobFromText('product-images', filename, buffer, {
             contentType: type
         }, (error, result, response) => {
             if (error) {
                 fileName = 'default-product.png';
             }
         });
-
+        console.log(uploadedData);
         const data = {
-            ...body,
+            title, description, slug, price, active, tags,
             image: 'https://nodestorestorage.blob.core.windows.net/product-images/' + filename
         }
 
-        const productSaved = await repository.create();
+        const productSaved = await repository.create(data);
 
         console.log(productSaved);
         res.status(201).json({
