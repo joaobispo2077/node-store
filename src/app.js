@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 const express = require('express');
 const mongoose = require("mongoose");
+require('dotenv/config');
 
 const app = express();
 
@@ -18,11 +20,7 @@ const ordersRoutes = require('./routes/Order');
 
 const bikcraftRoutes = require('./routes/Bikcraft');
 
-const uri = config.connectionString;
-
-// mongoose.connect(uri, {
-//     useNewUrlParser: true
-// });
+const uri = (process.env.MONGODB_CONNECTION_STRING);
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected...'))

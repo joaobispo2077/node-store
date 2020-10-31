@@ -1,14 +1,14 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 'use strict'
-
+require('dotenv/config');
 
 const http = require('http');
 const debug = require('debug')('nodestr:server');
 
 const app = require('../src/app');
 
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.SERVER_PORT || '3000');
 app.set('port', port);
 
 
