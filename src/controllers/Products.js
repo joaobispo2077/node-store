@@ -92,7 +92,8 @@ exports.getById = async(req, res, next) => {
 
 
 exports.post = async(req, res, next) => {
-    const { title, description, slug, price, active, tags, image } = req.body;
+    const { title, description, slug, price, active, file } = req.body;
+    const tags = req.body.tags.split(',');
 
     const contract = new ValidatorContract();
 
@@ -106,37 +107,37 @@ exports.post = async(req, res, next) => {
     }
 
     try {
-        const blobService = azure.createBlobService(process.env.AZURE_STORAGE_CONNECTION_STRING);
+        // const blobService = azure.createBlobService(process.env.AZURE_STORAGE_CONNECTION_STRING);
 
-        let fileName = guid.raw().toString() + '.jpg';
-        const rawdata = image;
+        const url = file.filename;
+        // const rawdata = image;
 
-        // eslint-disable-next-line no-useless-escape
-        const matches = rawdata.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        // // eslint-disable-next-line no-useless-escape
+        // const matches = rawdata.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
 
-        const type = matches[1];
+        // const type = matches[1];
 
-        const buffer = new Buffer(matches[2], 'base64');
+        // const buffer = new Buffer(matches[2], 'base64');
 
-        const uploadedData = await blobService.createBlockBlobFromText('product-images', filename, buffer, {
-            contentType: type
-        }, (error, result, response) => {
-            if (error) {
-                fileName = 'default-product.png';
-            }
-        });
-        console.log(uploadedData);
+        // const uploadedData = await blobService.createBlockBlobFromText('product-images', filename, buffer, {
+        //     contentType: type
+        // }, (error, result, response) => {
+        //     if (error) {
+        //         fileName = 'default-product.png';
+        //     }
+        // });
+        // console.log(uploadedData);
         const data = {
             title, description, slug, price, active, tags,
-            image: 'https://nodestorestorage.blob.core.windows.net/product-images/' + filename
+            image: url
         }
 
-        const productSaved = await repository.create(data);
+        // const productSaved = await repository.create(data);
 
-        console.log(productSaved);
+        console.log(data, req);
         res.status(201).json({
             message: 'O produto foi criado com sucesso!',
-            product: productSaved
+            product: data
         });
 
     } catch (err) {

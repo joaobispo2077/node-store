@@ -20,6 +20,7 @@
         "http": "0.0.1-security",
         "md5": "^2.3.0",
         "mongoose": "^5.10.8",
+        "multer-azure-blob-storage": "^1.0.2",
         "sendgrid": "^2.0.0"
     },
     "devDependencies": {
