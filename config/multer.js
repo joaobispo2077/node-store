@@ -21,6 +21,21 @@ const resolveBlobName = (req, file) => {
   });
 };
 
+function setMetaData(req, file) {
+  const { title, slug } = req.body;
+
+  const metadata = { title, slug };
+
+  return metadata;
+}
+
+const resolveMetadata = (req, file) => {
+  return new Promise((resolve, reject) => {
+      const metadata = setMetaData(req, file);
+      resolve(metadata);
+  });
+};
+
 
 const azureStorage = new MulterAzureStorage({
     connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
@@ -29,9 +44,10 @@ const azureStorage = new MulterAzureStorage({
     containerName: process.env.AZURE_STORAGE_CONTAINER_NAME,
     containerAccessLevel: 'blob',
     blobName: resolveBlobName,
-    urlExpirationTime: 60
+    metadata: resolveMetadata,
+    urlExpirationTime: 60,  mimetype: 'image/jpeg'
 });
 
-const upload = multer({ storage: azureStorage });
+const upload = multer({ storage: azureStorage});
 
 module.exports = upload;

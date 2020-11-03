@@ -92,7 +92,7 @@ exports.getById = async(req, res, next) => {
 
 
 exports.post = async(req, res, next) => {
-    const { title, description, slug, price, active, file } = req.body;
+    const { title, description, slug, price, active } = req.body;
     const tags = req.body.tags.split(',');
 
     const contract = new ValidatorContract();
@@ -108,8 +108,7 @@ exports.post = async(req, res, next) => {
 
     try {
         // const blobService = azure.createBlobService(process.env.AZURE_STORAGE_CONNECTION_STRING);
-
-        const url = file.filename;
+        // console.log(files);
         // const rawdata = image;
 
         // // eslint-disable-next-line no-useless-escape
@@ -127,14 +126,11 @@ exports.post = async(req, res, next) => {
         //     }
         // });
         // console.log(uploadedData);
-        const data = {
-            title, description, slug, price, active, tags,
-            image: url
-        }
+        const data = { title, description, slug, price, active, tags, image: req.file.url }
 
         // const productSaved = await repository.create(data);
 
-        console.log(data, req);
+        console.log(data, req.file);
         res.status(201).json({
             message: 'O produto foi criado com sucesso!',
             product: data
