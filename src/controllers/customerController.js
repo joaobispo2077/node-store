@@ -1,6 +1,7 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 'use strict'
-
+require('dotenv/config');
 const md5 = require('md5');
 
 const ValidatorContract = require('../validators/fluidValidator');
@@ -23,7 +24,7 @@ exports.post = async (req, res, next) => {
     const body = {
       name: req.body.name,
       email: req.body.email,
-      password: md5(req.body.password + global.SALT_KEY)
+      password: md5(req.body.password + process.env.SALT_KEY)
     };
 
     const contract = new ValidatorContract();
@@ -45,7 +46,7 @@ exports.post = async (req, res, next) => {
       emailService.send(
         body.email, 
         'Bem vindo ao Node Store', 
-        global.EMAIL_TMPL.replace('{0}', body.name)
+        process.env.EMAIL_TMPL.replace('{0}', body.name)
         );
 
       res.status(201).json({ message: 'customer has created successfully', data});

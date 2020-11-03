@@ -1,13 +1,13 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 'use strict'
-
+require('dotenv/config');
 const azure = require('azure-storage');
 const guid = require('guid');
 
 const ValidatorContract = require('../validators/fluidValidator');
 const repository = require('../repositories/productRepository');
-const config = require('../../config/config');
+
 
 exports.listAll = async(req, res, next) => {
 
@@ -106,7 +106,7 @@ exports.post = async(req, res, next) => {
     }
 
     try {
-        const blobService = azure.createBlobService(config.userImagesBlobConnectionString);
+        const blobService = azure.createBlobService(process.env.AZURE_STORAGE_CONNECTION_STRING);
 
         let fileName = guid.raw().toString() + '.jpg';
         const rawdata = image;

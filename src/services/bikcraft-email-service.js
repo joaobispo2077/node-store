@@ -1,9 +1,10 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 'use strict';
-const config = require('../../config/config');
+require('dotenv/config');
 const sendgrid = require('@sendgrid/mail');
 
-sendgrid.setApiKey(config.sendgridKey);
+sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.send = async(from, subject, body) => {
   const msg = { 
