@@ -107,33 +107,22 @@ exports.post = async(req, res, next) => {
     }
 
     try {
-        // const blobService = azure.createBlobService(process.env.AZURE_STORAGE_CONNECTION_STRING);
-        // console.log(files);
-        // const rawdata = image;
 
-        // // eslint-disable-next-line no-useless-escape
-        // const matches = rawdata.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        const data = { 
+            title, 
+            description, 
+            slug, price, 
+            active, 
+            tags, 
+            image: req.file.url 
+        };
 
-        // const type = matches[1];
+        const productSaved = await repository.create(data);
 
-        // const buffer = new Buffer(matches[2], 'base64');
-
-        // const uploadedData = await blobService.createBlockBlobFromText('product-images', filename, buffer, {
-        //     contentType: type
-        // }, (error, result, response) => {
-        //     if (error) {
-        //         fileName = 'default-product.png';
-        //     }
-        // });
-        // console.log(uploadedData);
-        const data = { title, description, slug, price, active, tags, image: req.file.url }
-
-        // const productSaved = await repository.create(data);
-
-        console.log(data, req.file);
+        // console.log(data, req.file);
         res.status(201).json({
             message: 'O produto foi criado com sucesso!',
-            product: data
+            product: productSaved
         });
 
     } catch (err) {
