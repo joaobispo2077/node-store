@@ -6,9 +6,9 @@ const multer = require('multer');
 const crypto = require('crypto');
 const MulterAzureStorage = require('multer-azure-storage');
 
-function setFileName(req, file, cb) {
+ function setFileName(file) {
   const hash = crypto.randomBytes(6).toString('hex');
-  console.log(req.file);
+
   const fileName = `${hash}-${file.originalname}`;
 
   return fileName;
@@ -20,7 +20,7 @@ const azureStorage = new MulterAzureStorage({
     azureStorageAccount: process.env.AZURE_STORAGE_ACCOUNT,
     containerName: process.env.AZURE_STORAGE_CONTAINER_NAME,
     containerSecurity: 'blob',
-    // fileName: setFileName,
+    fileName: setFileName,
 });
 
 const upload = multer({ storage: azureStorage });
