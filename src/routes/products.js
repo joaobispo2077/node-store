@@ -3,7 +3,7 @@
 
 const router = require('express').Router();
 
-const upload = require('../../config/multer');
+const upload = require('../../config/multer-v2');
 const Products = require('../controllers/Products');
 
 router.get('/', Products.listAll);

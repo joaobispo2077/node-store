@@ -36,7 +36,24 @@ const resolveMetadata = (req, file) => {
   });
 };
 
+function setContentSettings(req, file) {
+  const contentSettings = {                    
+    contentSettings: {
+        contentType: file.mimetype,
+        contentDisposition: 'inline'
+    }
+  }
+  console.log(file.mimetype);
 
+  return contentSettings;
+}
+
+const resolveContentSettings = (req, file) => {
+  return new Promise((resolve, reject) => {
+      const contentSettings = setContentSettings(req, file);
+      resolve(contentSettings);
+  });
+};
 const azureStorage = new MulterAzureStorage({
     connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
     accessKey: process.env.AZURE_STORAGE_ACCESS_KEY,
@@ -45,6 +62,7 @@ const azureStorage = new MulterAzureStorage({
     containerAccessLevel: 'blob',
     blobName: resolveBlobName,
     metadata: resolveMetadata,
+    contentSettings: resolveContentSettings,
     urlExpirationTime: 60,  mimetype: 'image/jpeg'
 });
 
