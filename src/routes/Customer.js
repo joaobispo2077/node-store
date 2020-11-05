@@ -9,4 +9,6 @@ router.get('/', Customer.listAll);
 
 router.post('/', Customer.post);
 
+router.post('/authenticate', Customer.authenticate);
+
 module.exports = router;

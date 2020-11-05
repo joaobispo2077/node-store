@@ -7,6 +7,7 @@ const md5 = require('md5');
 const ValidatorContract = require('../validators/fluidValidator');
 const repository = require('../repositories/customerRepository');
 const emailService = require('../services/email-service');
+const authService = require('../services/authService');
 
 exports.listAll = async (req, res, next) => {
 
@@ -50,6 +51,36 @@ exports.post = async (req, res, next) => {
         );
 
       res.status(201).json({ message: 'customer has created successfully', data});
+    } catch (err) {
+      console.log(err); 
+      res.status(500).json({ message: 'internal server error' });
+    }
+
+}
+
+exports.authenticate = async (req, res, next) => {
+    const body = {
+      email: req.body.email,
+      password: md5(req.body.password + process.env.SALT_KEY)
+    };
+
+    try {
+      const customer = await repository.authenticate(body);
+
+      if (!customer) {
+        res.status(404).json({ message: 'customer not found' });
+        return;
+      } else {
+
+        const dataToToken = { 
+          email: customer.email,
+          name: customer.name
+        };
+  
+        const token = await authService.generateToken(dataToToken);
+  
+        res.status(201).json({ token, dataToToken});
+      }
     } catch (err) {
       console.log(err); 
       res.status(500).json({ message: 'internal server error' });
