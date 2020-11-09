@@ -4,9 +4,10 @@
 const router = require('express').Router();
 
 const Order = require('../controllers/orderController');
+const authService = require('../services/authService');
 
-router.get('/', Order.listAll);
+router.get('/', authService.authorize, Order.listAll);
 
-router.post('/', Order.post);
+router.post('/', authService.authorize, Order.post);
 
 module.exports = router;

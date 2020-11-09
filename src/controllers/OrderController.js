@@ -5,6 +5,7 @@ const guid = require('guid');
 
 const ValidatorContract = require('../validators/fluidValidator');
 const repository = require('../repositories/orderRepository');
+const authService = require('../services/authService');
 
 
 exports.listAll = async (req, res, next) => {
@@ -17,25 +18,30 @@ exports.listAll = async (req, res, next) => {
   }
 }
 exports.post = async (req, res, next) => {
-  const body = {
-    customer: req.body.customer,
-    number: guid.raw().substring(0, 6),
-    items: req.body.items
-  };
-
-
-  const contract = new ValidatorContract();
-
-  contract.hasMinLen(body.customer, 3, 'O cliente deve ter um id válido');
-
-
-
-  if (!contract.isValid()) {
-      res.status(500).send(contract.errors()).end();
-      return;
-  }
-
+  
   try {
+    const token = (req.body.token || req.query.token || req.headers['x-access-token']);
+    
+    const dataToken = await authService.decodeToken(token);
+
+      const body = {
+        customer: dataToken.id,
+        number: guid.raw().substring(0, 6),
+        items: req.body.items
+      };
+    
+    
+      const contract = new ValidatorContract();
+    
+      contract.hasMinLen(body.customer, 3, 'O cliente deve ter um id válido');
+    
+    
+    
+      if (!contract.isValid()) {
+          res.status(500).send(contract.errors()).end();
+          return;
+      }
+
     const orderCreated = await repository.create(body);
     res.status(201).json(orderCreated);
   } catch (err) {

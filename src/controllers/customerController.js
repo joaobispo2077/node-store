@@ -73,6 +73,7 @@ exports.authenticate = async (req, res, next) => {
       } else {
 
         const dataToToken = { 
+          id: customer._id,
           email: customer.email,
           name: customer.name
         };
