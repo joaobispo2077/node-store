@@ -22,12 +22,15 @@ exports.listAll = async (req, res, next) => {
   }
 
 exports.post = async (req, res, next) => {
+    const isAdmin = req.body.roles == 'admin';
+
     const body = {
       name: req.body.name,
       email: req.body.email,
-      password: md5(req.body.password + process.env.SALT_KEY)
+      password: md5(req.body.password + process.env.SALT_KEY),
+      roles: (isAdmin ? ["user", "admin"] : ["user"])
     };
-
+    console.log(body);
     const contract = new ValidatorContract();
 
     contract.hasMinLen(body.name, 3, 'O Nome deve conter pelo menos 3 caracteres');
@@ -75,9 +78,10 @@ exports.authenticate = async (req, res, next) => {
         const dataToToken = { 
           id: customer._id,
           email: customer.email,
-          name: customer.name
+          name: customer.name,
+          roles: customer.roles
         };
-  
+        console.log(dataToToken);
         const token = await authService.generateToken(dataToToken);
   
         res.status(201).json({ token, dataToToken});
@@ -108,7 +112,8 @@ exports.refreshToken = async (req, res, next) => {
         const dataToToken = { 
           id: customer._id,
           email: customer.email,
-          name: customer.name
+          name: customer.name,
+          roles: customer.roles
         };
 
         const token = await authService.generateToken(dataToToken);

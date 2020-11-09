@@ -16,10 +16,10 @@ router.get('/tags/:tags', Products.getByTags);
 
 router.get('/:slug', Products.getBySlug);
 
-router.post('/', authService.authorize,upload.single('file'), Products.post);
+router.post('/', authService.isAdmin,upload.single('file'), Products.post);
 
-router.patch('/:id', authService.authorize, Products.patch);
+router.patch('/:id', authService.isAdmin, Products.patch);
 
-router.delete('/:id', authService.authorize, Products.delete);
+router.delete('/:id', authService.isAdmin, Products.delete);
 
 module.exports = router;
