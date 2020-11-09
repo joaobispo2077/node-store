@@ -16,6 +16,12 @@ exports.authenticate = async (data) => {
 	return customer;
 }
 
+exports.getById = async (id) => {
+	const customer = await Customer.findById(id).populate('customer');
+
+	return customer;
+}
+
 exports.create = async (data) => {
 				const customer =  new Customer(data);
 				return await customer.save();

@@ -88,3 +88,36 @@ exports.authenticate = async (req, res, next) => {
     }
 
 }
+
+exports.refreshToken = async (req, res, next) => {
+  
+  try {
+      const token = (req.body.token || req.query.token || req.headers['x-access-token']);
+      
+      const userToken = await authService.decodeToken(token);
+
+      const customerId = userToken.id;
+
+      const customer = await repository.getById(customerId);
+
+      if (!customer) {
+        res.status(404).json({ message: 'Cliente não encontrado' });
+        return;
+      } else {
+
+        const dataToToken = { 
+          id: customer._id,
+          email: customer.email,
+          name: customer.name
+        };
+
+        const token = await authService.generateToken(dataToToken);
+
+        res.status(201).json({ token, dataToToken});
+      }
+    } catch (err) {
+      console.log(err); 
+      res.status(500).json({ message: 'internal server error' });
+    }
+
+}
